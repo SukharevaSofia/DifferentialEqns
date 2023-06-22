@@ -1,5 +1,9 @@
 package utils
 
+const DEBUG_STATEMENTS = false
+const GRAPH_FULL = false
+const TABLE_FULL = false
+
 const (
 	INFO = "" +
 		"Лабораторная работа №6\n" +

@@ -13,7 +13,8 @@ func RungeKuttaMethod(eqn utils.Equation, x0, y0, xo, xn, h, accuracy float64, o
 		origin = yh
 	}
 	yh = Cutout(origin, yh)
-	yh2 := Cutout(origin, countRungeKutta(f, x0, xn, y0, h/2))
+	yh2uncut := countRungeKutta(f, x0, xn, y0, h/2)
+	yh2 := Cutout(origin, yh2uncut)
 	for i := 0; i < len(yh.Y); i++ {
 		if cnt >= 100 {
 			break
@@ -24,7 +25,7 @@ func RungeKuttaMethod(eqn utils.Equation, x0, y0, xo, xn, h, accuracy float64, o
 		cnt++
 	}
 	println("RUNGE ITERATIONS: ", cnt)
-	return yh2
+	return yh2uncut
 }
 
 func countRungeKutta(f func(x float64, y float64) float64, x0, xn, y0, h float64) utils.XY {

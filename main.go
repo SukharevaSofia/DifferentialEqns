@@ -35,8 +35,10 @@ func main() {
 	x0, y0, xo, xn, h, accuracy := IO.UserInput(eqn1, eqn2, eqn3)
 
 	fmt.Println(x0, y0, xo, xn, h, accuracy)
-	euler := methods.EulerMethod(eqn3, x0, y0, xo, xn, h, accuracy, 0, utils.XY{}, true)
-	runge := methods.RungeKuttaMethod(eqn3, x0, y0, xo, xn, h, accuracy, utils.XY{}, true)
-	precise := methods.PreciseAns(eqn3, x0, y0, xn, h)
-	IO.OutputResults(euler, runge, precise, accuracy)
+	fToBeEvaluated := eqn1
+	euler := methods.EulerMethod(fToBeEvaluated, x0, y0, xo, xn, h, accuracy, 0, utils.XY{}, true)
+	runge := methods.RungeKuttaMethod(fToBeEvaluated, x0, y0, xo, xn, h, accuracy, utils.XY{}, true)
+	adams := methods.AdamsMethod(fToBeEvaluated, x0, y0, xo, xn, h, accuracy, 0, utils.XY{}, true)
+	precise := methods.PreciseAns(fToBeEvaluated, x0, y0, xn, h)
+	IO.OutputResults(euler, runge, adams, precise, accuracy)
 }

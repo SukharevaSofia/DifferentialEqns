@@ -15,18 +15,14 @@ func EulerMethod(eqn utils.Equation, x0, y0, xo, xn, h, accuracy float64, cnt in
 		origin = yh
 	}
 	yh = Cutout(origin, yh)
-	yh2 := Cutout(origin, countEuler(f, x0, xn, y0, h/2, yh.X[len(yh.X)-1]+1e-9))
+	yh2uncut := countEuler(f, x0, xn, y0, h/2, yh.X[len(yh.X)-1]+1e-9)
+	yh2 := Cutout(origin, yh2uncut)
 	for i := 0; i < n; i++ {
 		if cnt >= 100 {
 			break
 		}
-		fmt.Println("ITER# ", cnt)
-		fmt.Println(" yh: ", yh.Y)
-		fmt.Println(" yh2:; ", yh2.Y)
 		for index, _ := range yh.Y {
 			if math.Abs(yh.Y[index]-yh2.Y[index])/15 > math.Pow(10, -accuracy) {
-				println("E ITERATION №", cnt)
-				fmt.Println(yh.Y[1] - yh2.Y[1])
 				cnt++
 				return EulerMethod(eqn, x0, y0, xo, xn, h/2, accuracy, cnt, origin, false)
 			}
@@ -34,7 +30,7 @@ func EulerMethod(eqn utils.Equation, x0, y0, xo, xn, h, accuracy float64, cnt in
 		break
 	}
 	println("EULER ITERATIONS: ", cnt)
-	return yh2
+	return yh2uncut
 }
 
 func countEuler(f func(x float64, y float64) float64, x0, xn, y0, h, goal float64) utils.XY {
@@ -55,6 +51,7 @@ func countEuler(f func(x float64, y float64) float64, x0, xn, y0, h, goal float6
 }
 
 func Cutout(origin, new utils.XY) utils.XY {
+	// O(n*n) gains reliability and simplicity
 	if len(origin.X) != len(origin.Y) {
 		fmt.Println("X and Y len don't match in the origin, function Cutout")
 		os.Exit(1)
@@ -63,22 +60,35 @@ func Cutout(origin, new utils.XY) utils.XY {
 		fmt.Println("X and Y len don't match in the new struct, function Cutout")
 		os.Exit(1)
 	}
+	filteredX := []float64{}
 	filteredY := []float64{}
-	i := 0
-	j := 0
-	for i < len(origin.X) && j < len(new.X) {
-		if utils.Float64Equals(origin.X[i], new.X[j], 1e-9) {
-			filteredY = append(filteredY, new.Y[j])
-			i++
-		} else if new.X[j] > origin.X[i] {
-			i++
-		} else if origin.X[i] > new.X[j] {
-			j++
+	for _, looked := range origin.X {
+		closest := math.MaxFloat64
+		currentY := math.MaxFloat64
+		for lookingIndex, looking := range new.X {
+			currentCloseness := math.Abs(looked - looking)
+			if currentCloseness < closest {
+				closest = currentCloseness
+				currentY = new.Y[lookingIndex]
+			}
 		}
+		filteredX = append(filteredX, looked)
+		filteredY = append(filteredY, currentY)
 	}
+
 	if len(filteredY) != len(origin.Y) {
 		fmt.Println("Cutout function messed up, length don't match up")
+		if false {
+			fmt.Println("Origin.X:")
+			fmt.Println(origin.X)
+			fmt.Println("Origin.Y:")
+			fmt.Println(origin.Y)
+			fmt.Println("new.X")
+			fmt.Println(new.X)
+			fmt.Println("filteredY:")
+			fmt.Println(filteredY)
+		}
 		os.Exit(1)
 	}
-	return utils.XY{X: origin.X, Y: filteredY}
+	return utils.XY{X: filteredX, Y: filteredY}
 }
