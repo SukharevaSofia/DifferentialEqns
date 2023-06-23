@@ -10,14 +10,23 @@ import (
 	"strings"
 )
 
-func UserInput(eqn1, eqn2, eqn3 utils.Equation) (float64, float64, float64, float64, float64, float64) {
+func UserInput(eqn1, eqn2, eqn3 utils.Equation) (float64, float64, float64, float64, float64, float64, int) {
 	fmt.Println(utils.INFO)
 	fmt.Println(utils.CHOOSE_FUNC)
 	fmt.Println("1: ", eqn1.NameOfFunction)
 	fmt.Println("2: ", eqn2.NameOfFunction)
 	fmt.Println("3: ", eqn3.NameOfFunction)
-	fmt.Println(utils.CHOOSE_INPUT)
 	var inputString string
+	var eqn int
+	for {
+		fmt.Scan(&eqn)
+		if !(eqn == 1 || eqn == 2 || eqn == 3) {
+			fmt.Println(utils.INPUT_ERR)
+			continue
+		}
+		break
+	}
+	fmt.Println(utils.CHOOSE_INPUT)
 	for {
 		fmt.Scan(&inputString)
 		if !(inputString == "T" || inputString == "t" || inputString == "F" || inputString == "f") {
@@ -27,12 +36,12 @@ func UserInput(eqn1, eqn2, eqn3 utils.Equation) (float64, float64, float64, floa
 		break
 	}
 	if inputString == "T" || inputString == "t" {
-		return terminalInput()
+		return terminalInput(eqn)
 	}
-	return fileInput()
+	return fileInput(eqn)
 }
 
-func terminalInput() (float64, float64, float64, float64, float64, float64) {
+func terminalInput(eqn int) (float64, float64, float64, float64, float64, float64, int) {
 	fmt.Println(utils.INPUT_X0Y0)
 	var x0, y0 float64
 	fmt.Scan(&x0, &y0)
@@ -74,10 +83,10 @@ func terminalInput() (float64, float64, float64, float64, float64, float64) {
 		accuracy++
 		acc *= 10
 	}
-	return x0, y0, xo, xn, h, accuracy
+	return x0, y0, xo, xn, h, accuracy, eqn
 }
 
-func fileInput() (float64, float64, float64, float64, float64, float64) {
+func fileInput(eqn int) (float64, float64, float64, float64, float64, float64, int) {
 	f, _ := os.Open("./data/data1.txt")
 	scanner := bufio.NewScanner(f)
 	scanner.Scan()
@@ -98,5 +107,5 @@ func fileInput() (float64, float64, float64, float64, float64, float64) {
 		accuracy++
 		acc *= 10
 	}
-	return x0, y0, xo, xn, h, accuracy
+	return x0, y0, xo, xn, h, accuracy, eqn
 }

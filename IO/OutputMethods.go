@@ -113,7 +113,7 @@ func buildChart(euler, runge, adams, precise utils.XY) {
 			chart.ContinuousSeries{
 				Style: chart.Style{
 					StrokeWidth: chart.Disabled,
-					DotWidth:    2,
+					DotWidth:    4,
 				},
 				Name:    "точные значения",
 				XValues: precise.X,

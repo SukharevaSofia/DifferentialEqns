@@ -53,7 +53,7 @@ func AdamsMethod(eqn utils.Equation, x0, y0, xo, xn, h, accuracy float64, cnt in
 	xyNew = Cutout(origin, xyNew)
 	for index, _ := range xyNew.Y {
 		precisionDiff := math.Pow(10, -accuracy)
-		if math.Abs(xyNew.Y[index]-precise.Y[index]) > precisionDiff {
+		if math.Abs(xyNew.Y[index]-precise.Y[index]) > precisionDiff && cnt < 20 {
 			cnt++
 			if utils.DEBUG_STATEMENTS {
 				fmt.Println("IT: ", cnt, "  IND: ", index, " : ", math.Abs(xyNew.Y[index]-precise.Y[index])-precisionDiff)
@@ -63,5 +63,8 @@ func AdamsMethod(eqn utils.Equation, x0, y0, xo, xn, h, accuracy float64, cnt in
 		}
 	}
 	fmt.Println("ADAMS ITERATIONS: ", cnt)
+	if cnt == 20 {
+		println("решение не сходится :(")
+	}
 	return result
 }

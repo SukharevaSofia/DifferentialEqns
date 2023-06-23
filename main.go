@@ -4,7 +4,6 @@ import (
 	"DifferentialEqns/IO"
 	"DifferentialEqns/methods"
 	"DifferentialEqns/utils"
-	"fmt"
 	"math"
 )
 
@@ -32,13 +31,24 @@ func main() {
 		C:              func(x, y float64) float64 { return (y*6 - math.Pow(x, 6)) / 6 },
 		NameOfFunction: "y' = x^5",
 	}
-	x0, y0, xo, xn, h, accuracy := IO.UserInput(eqn1, eqn2, eqn3)
+	var fToBeEvaluated utils.Equation
+	x0, y0, xo, xn, h, accuracy, eqn := IO.UserInput(eqn1, eqn2, eqn3)
+	switch eqn {
+	case 1:
+		fToBeEvaluated = eqn1
+	case 2:
+		fToBeEvaluated = eqn2
+	case 3:
+		fToBeEvaluated = eqn3
+	}
+	//fmt.Println(x0, y0, xo, xn, h, accuracy)
 
-	fmt.Println(x0, y0, xo, xn, h, accuracy)
-	fToBeEvaluated := eqn1
 	euler := methods.EulerMethod(fToBeEvaluated, x0, y0, xo, xn, h, accuracy, 0, utils.XY{}, true)
+	println("euler ready")
 	runge := methods.RungeKuttaMethod(fToBeEvaluated, x0, y0, xo, xn, h, accuracy, utils.XY{}, true)
+	println("runge ready")
 	adams := methods.AdamsMethod(fToBeEvaluated, x0, y0, xo, xn, h, accuracy, 0, utils.XY{}, true)
+	println("adams ready")
 	precise := methods.PreciseAns(fToBeEvaluated, x0, y0, xn, h)
 	IO.OutputResults(euler, runge, adams, precise, accuracy)
 }

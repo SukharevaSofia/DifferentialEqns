@@ -18,18 +18,22 @@ func EulerMethod(eqn utils.Equation, x0, y0, xo, xn, h, accuracy float64, cnt in
 	yh2uncut := countEuler(f, x0, xn, y0, h/2, yh.X[len(yh.X)-1]+1e-9)
 	yh2 := Cutout(origin, yh2uncut)
 	for i := 0; i < n; i++ {
-		if cnt >= 100 {
-			break
+		if cnt >= 20 {
+			println("EULER ITERATIONS: ", cnt)
+			fmt.Println("Решение не сходится :(")
+			return yh2uncut
 		}
 		for index, _ := range yh.Y {
-			if math.Abs(yh.Y[index]-yh2.Y[index])/15 > math.Pow(10, -accuracy) {
+			if math.Abs(yh.Y[index]-yh2.Y[index])/3 > math.Pow(10, -accuracy) {
 				cnt++
+				//println("iteration #", cnt)
 				return EulerMethod(eqn, x0, y0, xo, xn, h/2, accuracy, cnt, origin, false)
 			}
 		}
 		break
 	}
 	println("EULER ITERATIONS: ", cnt)
+	println("H : ", h)
 	return yh2uncut
 }
 
@@ -51,7 +55,6 @@ func countEuler(f func(x float64, y float64) float64, x0, xn, y0, h, goal float6
 }
 
 func Cutout(origin, new utils.XY) utils.XY {
-	// O(n*n) gains reliability and simplicity
 	if len(origin.X) != len(origin.Y) {
 		fmt.Println("X and Y len don't match in the origin, function Cutout")
 		os.Exit(1)
